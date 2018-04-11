@@ -1,0 +1,46 @@
+button ion-icon{
+    padding-right: 5px;
+}
+
+.searchbar-md, .toolbar-background-md{
+    background: map-get($colors , primary )
+}
+
+ion-navbar button ion-icon{
+    color: white;
+}
+
+.toolbar-title-md{
+    color: white;
+}
+
+ion-card-header{
+    background: map-get($colors, primary)
+}
+
+ion-card-header .button-clear-md{
+    color: map-get($colors, light);
+}
+
+/**
+Refatoração do estilo de alguns componentes
+*/
+.card-md{
+    width: auto;
+}
+
+.card-header-md{
+    padding: 0px;
+}
+
+.card-content-md{
+    padding: 0px;
+}
+
+.padding-botton{
+    padding-bottom: 20px;
+}
+
+.col{
+    padding: 0px;
+}
