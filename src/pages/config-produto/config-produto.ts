@@ -65,11 +65,14 @@ export class ConfigProdutoPage {
     this.produto.custo.push(this.custo)
     //console.log(this.produto)
     this.db3.add(obj)
-    //this.navCtrl.pop()
+    this.navCtrl.pop()
   }
 
   scan(){
-    this.barcodeScanner.scan().then(barcodeData => {
+    //console.log("teste scanner");
+    this.barcodeScanner.scan({
+      orientation: 'landscape'
+    }).then(barcodeData => {
       this.produto.codigo = barcodeData.text
     }).catch(err => {
       console.error("[BARCODE SCAN] - "+err);

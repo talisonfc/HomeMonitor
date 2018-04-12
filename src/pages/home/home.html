@@ -28,17 +28,14 @@
   <ion-card *ngFor="let p of produtos$ | async">
     <ion-card-header>
       <ion-row>
-        <ion-col>
+        <ion-col col-10>
           <button (click)="hidden(p)" ion-button clear>
             <ion-icon name="book"></ion-icon> {{p.nome}}
           </button>
         </ion-col>
         
-        <ion-col>
+        <ion-col col-2>
           <ion-buttons right>
-            <button ion-button clear (click)="editProduto(p)">
-              <ion-icon name="create"></ion-icon>
-            </button>
             <button ion-button clear (click)="removeProduto(p)">
               <ion-icon name="trash"></ion-icon>
             </button>
@@ -49,23 +46,23 @@
 
     <ion-card-content [hidden]="!p.show">
       <ion-row>
-        <ion-col>
-          <ion-label class="label-detail">{{p.custo[0].loja}}</ion-label>
+        <ion-col *ngFor="let cst of p.custo">
+          <ion-label class="label-detail">{{cst.loja}}</ion-label>
           <button ion-button clear block>
-            {{p.custo[0].valor | format}}
+            {{cst.valor | format}}
           </button>
         </ion-col>
 
         <ion-col>
           <ion-label class="label-detail">Quantidade em estoque</ion-label>
-          <button ion-button clear block (click)="editProduto(p,'Quantidade em estoque', 'qtn', 'Quantidade', 'text', p.qtn)">
+          <button ion-button clear block (click)="editProduto(p,'Quantidade em estoque', 'qtn', 'Quantidade', 'number', p.qtn)">
             {{p.qtn}}
           </button>
         </ion-col>
 
         <ion-col>
           <ion-label class="label-detail">Quantidade mínima</ion-label>
-          <button ion-button clear block (click)="editProduto(p,'Quantidade mínima', 'qtn_min', 'Quantidade', 'text', p.qtn)">
+          <button ion-button clear block (click)="editProduto(p,'Quantidade mínima', 'qtn_min', 'Quantidade', 'number', p.qtn)">
             {{p.qtn_min}}
           </button>
         </ion-col>
