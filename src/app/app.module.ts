@@ -16,12 +16,15 @@ import { LojasPage } from '../pages/lojas/lojas'
 import { ConfigProdutoPage } from '../pages/config-produto/config-produto'
 
 import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
+//import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { CONFIG } from './firebase.config'
-import { DatabaseProvider } from '../providers/database/database';
 
 import { FormatPipe } from '../pipes/format/format'
+import { ProdutoProvider } from '../providers/produto/produto';
+import { CategoriaProvider } from '../providers/categoria/categoria';
+import { LojaProvider } from '../providers/loja/loja';
+import { CompraProvider } from '../providers/compra/compra';
 
 @NgModule({
   declarations: [
@@ -54,10 +57,13 @@ import { FormatPipe } from '../pipes/format/format'
   ],
   providers: [
     StatusBar,
-    SplashScreen,
+    //SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    DatabaseProvider,
-    BarcodeScanner
+    BarcodeScanner,
+    ProdutoProvider,
+    CategoriaProvider,
+    LojaProvider,
+    CompraProvider
   ]
 })
 export class AppModule {}

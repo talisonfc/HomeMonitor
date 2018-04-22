@@ -7,6 +7,9 @@ import { DatabaseProvider } from '../../providers/database/database'
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 
 import { ConfigProdutoPage } from '../config-produto/config-produto'
+import { CategoriaModel } from '../../model/categoria.model';
+import { CategoriaProvider } from '../../providers/categoria/categoria';
+import { ProdutoProvider } from '../../providers/produto/produto';
 
 @Component({
   selector: 'page-home',
@@ -15,85 +18,35 @@ import { ConfigProdutoPage } from '../config-produto/config-produto'
 export class HomePage {
 
   produtos$: Observable<ProdutoModel[]>;
+  categorias$: Observable<CategoriaModel[]>;
   search: string;
 
-  constructor(private db: DatabaseProvider<ProdutoModel[]>,
+  constructor(private dbprodutos: ProdutoProvider<ProdutoModel[]>,
+    private dbcategorias: CategoriaProvider<CategoriaModel[]>,
     public navCtrl: NavController,
     public alert: AlertController) {
-    this.produtos$ = this.db.
+      
+    this.produtos$ = this.dbprodutos.
     get('alimentacao')
     .snapshotChanges()
     .map(changes => {
       return changes.map(c => ({key: c.payload.key, ...c.payload.val()}))
     })
 
+    this.categorias$ = this.dbcategorias.
+    get('categorias')
+    .snapshotChanges()
+    .map(changes => {
+      return changes.map(c => ({key: c.payload.key, ...c.payload.val()}))
+    })
   }
 
   addProduto(obj: any){
     this.navCtrl.push(ConfigProdutoPage, {obj: this.produtos$})
-    /*
-    var novo = false
-    if(obj === undefined){
-      obj = new ProdutoModel();
-      novo = true;
-    }
-    let prompt = this.alert.create({
-      title: 'Novo Produto',
-      inputs: [
-        {
-          name: 'nome',
-          placeholder: 'Nome',
-          value: obj.nome
-        },
-        {
-          name: "qtn",
-          placeholder: "Quantidade",
-          type: "number",
-          value: obj.qtn
-        },
-        {
-          name: "qtn_min",
-          placeholder: "Minimo",
-          type: "number",
-          value: obj.qtn_min
-        },
-        {
-          name: 'valor',
-          placeholder: 'Valor',
-          type: 'number',
-          value: obj.valor
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar'
-        },
-        {
-          text: 'Salvar',
-          handler: data => {
-            console.log(data);
-            var produto = <ProdutoModel>data;
-
-            if(novo){
-              this.db.add(produto)
-            }
-            else{
-              produto.key = obj.key;
-              this.db.edit(produto);
-            }
-              
-          }
-        }
-      ]
-    })
-
-    prompt.present();
-
-    */
   }
 
   removeProduto(obj: any){
-    this.db.remove(obj);
+    this.dbprodutos.remove(obj);
   }
 
   editProduto(obj: any, titulo: string, field: string, placeholder: string, tipo: string, value: any){
@@ -115,14 +68,40 @@ export class HomePage {
           text: 'Salvar',
           handler: data => {
             obj[field] = data[field];
-            this.db.edit(obj);
-              
+            this.dbprodutos.edit(obj);
           }
         }
       ]
     })
 
     prompt.present();
+  }
+
+  editPreco(obj: any, index: number){
+    let alert = this.alert.create({
+      title: "Editar preço",
+      inputs: [
+        {
+          type: "number",
+          label: "Preço",
+          name: "valor",
+          value: obj.custo[index].valor
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar'
+        },
+        {
+          text: 'Salvar',
+          handler: data=>{
+            obj.custo[index].valor = data.valor;
+            this.dbprodutos.edit(obj);
+          }
+        }
+      ]
+    })
+    alert.present();
   }
 
   onInput(event: any){
@@ -144,8 +123,7 @@ export class HomePage {
   }
 
   hidden(obj: any){
-    console.log(obj.show)
     obj.show = !obj.show;
-    console.log(obj.show)
+    this.dbprodutos.edit(obj);
   }
 }

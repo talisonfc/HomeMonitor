@@ -2,7 +2,7 @@ export class CompraModel{
     key?: string
     nome: string
     valor: number
-    data: Date
+    data: string
     show?: boolean
     categoria?: string
 }

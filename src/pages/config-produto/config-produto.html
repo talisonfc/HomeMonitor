@@ -12,25 +12,45 @@
   <ion-card>
     <ion-card-content>
 
-      <ion-item>
-        <ion-label floating>Código de Barra</ion-label>
-        <ion-input (click)="scan()" [(ngModel)]="produto.codigo" type="text"></ion-input>
-      </ion-item>
+      <ion-row>
+        <ion-col col-10>
+          <ion-item>
+            <ion-label floating>Código de Barra</ion-label>
+            <ion-input [(ngModel)]="produto.codigo" type="text"></ion-input>
+          </ion-item>        
+        </ion-col>
 
+        <ion-col col-2>
+          <button (click)="scan()" ion-button clear style="height: 100%">
+            <ion-icon name="barcode"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+      
       <ion-item>
         <ion-label floating>Nome</ion-label>
         <ion-input [(ngModel)]="produto.nome" type="text"></ion-input>
       </ion-item>
 
-      <ion-item>
-        <ion-label floating>Quantidade em estoque</ion-label>
-        <ion-input [(ngModel)]="produto.qtn" type="number"></ion-input>
-      </ion-item>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label floating>Estoque</ion-label>
+            <ion-input [(ngModel)]="produto.qtn" type="number"></ion-input>
+          </ion-item>
+        </ion-col>
 
-      <ion-item>
-        <ion-label floating>Quantidade mínima</ion-label>
-        <ion-input [(ngModel)]="produto.qtn_min" type="number"></ion-input>
-      </ion-item>
+        <ion-col>
+          <ion-item>
+            <ion-label floating>Mínima</ion-label>
+            <ion-input [(ngModel)]="produto.qtn_min" type="number"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      
+
+      
 
       <ion-item>
         <ion-label floating>Valor</ion-label>
@@ -50,12 +70,18 @@
           <ion-option *ngFor="let c of categorias$ | async" value="{{c.nome}}">{{c.nome}}</ion-option>
         </ion-select>
       </ion-item>
-
-      <ion-buttons padding>
-        <button (click)="cancelar()" ion-button block>Cancelar</button> 
-        <button (click)="salvar(produto)" ion-button block>Salvar</button>
-      </ion-buttons>
-
     </ion-card-content>
   </ion-card>
+
+  <ion-buttons class="footer">
+    <ion-row>
+      <ion-col>
+        <button (click)="cancelar()" ion-button full clear>Cancelar</button> 
+      </ion-col>
+      <ion-col>
+        <button (click)="salvar(produto)" ion-button full clear>Salvar</button>
+      </ion-col>
+    </ion-row>
+    
+  </ion-buttons>
 </ion-content>

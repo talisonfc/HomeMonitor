@@ -1,14 +1,10 @@
-import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database'
 
-@Injectable()
 export class DatabaseProvider<T> {
   private key: string;
   private ref: any;
 
-  constructor(private db: AngularFireDatabase) {
-    console.log('Hello DatabaseProvider Provider');
-  }
+  constructor(private db: AngularFireDatabase) {}
 
   get(key: string){
     this.key = key;

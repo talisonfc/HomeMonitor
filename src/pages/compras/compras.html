@@ -5,44 +5,78 @@
     </button>
     <ion-title>Compras</ion-title>
   </ion-navbar>
+
+  <div>
+    <ion-segment [(ngModel)]="option">
+      <ion-segment-button value="lista">
+        Lista
+      </ion-segment-button>
+      <ion-segment-button value="historico">
+        Histórico
+      </ion-segment-button>
+    </ion-segment>
+  </div>
 </ion-header>
 
 
 <ion-content>
 
-  <ion-fab bottom right>
-    <button (click)="addCompra()" ion-fab mini><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
-
-  <ion-card *ngFor="let c of compras$ | async" [hidden]="c.show">
-    <ion-card-header>
-      <ion-row>
-        <ion-col>
-          <button (click)="hidden(c)" ion-button clear>
-            <ion-icon name="book"></ion-icon> {{c.nome}}
+  <div [ngSwitch]="option">
+    <div *ngSwitchCase="'historico'">
+      <ion-card *ngFor="let c of compras$ | async" [hidden]="c.show">
+        <ion-card-header>
+          <ion-row>
+            <ion-col>
+              <button (click)="hidden(c)" ion-button clear>
+                <ion-icon name="book"></ion-icon> {{c.nome}}
+              </button>
+            </ion-col>
+            
+            <ion-col>
+              <ion-buttons right>
+                <button ion-button clear (click)="editCompra(c)">
+                  <ion-icon name="create"></ion-icon>
+                </button>
+                <button ion-button clear (click)="removeCompra(c)">
+                  <ion-icon name="trash"></ion-icon>
+                </button>
+              </ion-buttons>
+            </ion-col>
+          </ion-row>
+        </ion-card-header>
+    
+        <ion-card-content>
+          <button ion-button clear>
+            {{c.valor | format}}
           </button>
-        </ion-col>
-        
-        <ion-col>
-          <ion-buttons right>
-            <button ion-button clear (click)="editCompra(c)">
-              <ion-icon name="create"></ion-icon>
-            </button>
-            <button ion-button clear (click)="removeCompra(c)">
-              <ion-icon name="trash"></ion-icon>
-            </button>
-          </ion-buttons>
-        </ion-col>
-      </ion-row>
-    </ion-card-header>
+          <button ion-button clear>
+            Data: {{c.data | date}}
+          </button>
+        </ion-card-content>
+      </ion-card>
 
-    <ion-card-content>
-      <button ion-button clear>
-        {{c.valor | format}}
-      </button>
-      <button ion-button clear>
-        Data: {{c.data | json}}
-      </button>
-    </ion-card-content>
-  </ion-card>
+      <ion-fab bottom right>
+        <button (click)="addCompra(undefined)" ion-fab mini><ion-icon name="add"></ion-icon></button>
+      </ion-fab>
+    </div>
+  
+
+    <div *ngSwitchCase="'lista'">
+      <ion-card *ngFor="let p of lista">
+        <ion-card-header>
+          <ion-row>
+            <ion-col col-10>
+              <button ion-button clear>{{p.nome}}</button>
+            </ion-col>
+            <ion-col col-2>
+              <button ion-button clear>{{p.qtn_min-p.qtn}}</button>
+            </ion-col>
+          </ion-row>
+        </ion-card-header>
+      </ion-card>
+    </div>
+
+  </div>
+
+  
 </ion-content>

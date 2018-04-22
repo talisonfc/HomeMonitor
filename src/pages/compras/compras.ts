@@ -4,6 +4,9 @@ import { DatabaseProvider } from '../../providers/database/database';
 import { CompraModel } from '../../model/compra.model'
 import { Observable } from 'rxjs/Observable';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { ProdutoModel } from '../../model/produto.model';
+import { CompraProvider } from '../../providers/compra/compra';
+import { ProdutoProvider } from '../../providers/produto/produto';
 
 @IonicPage()
 @Component({
@@ -13,17 +16,39 @@ import { AlertController } from 'ionic-angular/components/alert/alert-controller
 export class ComprasPage {
 
   compras$: Observable<CompraModel[]>
+  rol$: Observable<ProdutoModel[]>
+  
+  lista: Array<ProdutoModel> = new Array();
+  option: string = "historico";
 
-  constructor(private db: DatabaseProvider<CompraModel[]>,
+  constructor(private dbcompras: CompraProvider<CompraModel[]>,
+    private dbprodutos: ProdutoProvider<ProdutoModel[]>,
     public navCtrl: NavController, public navParams: NavParams,
     private alert: AlertController) {
 
-      this.compras$ = this.db
+      this.compras$ = this.dbcompras
       .get('compras')
       .snapshotChanges()
       .map(changes => {
         return changes.map(c => ({key: c.payload.key, ...c.payload.val()}))
       })
+
+      this.rol$ = this.dbprodutos
+      .get('alimentacao')
+      .snapshotChanges()
+      .map(changes => {
+        return changes.map(c => ({key: c.payload.key, ...c.payload.val()}))
+      })
+
+      this.rol$.subscribe( data => {
+        data.forEach(el => {
+          if( el.qtn < el.qtn_min){
+            this.lista.push(el);
+          }
+        })
+        //this.lista.push()
+      })
+      
   }
 
   ionViewDidLoad() {
@@ -59,15 +84,14 @@ export class ComprasPage {
           text: "Salvar",
           handler: data => {
             var compra = <CompraModel>data;
-            compra.data = new Date();
-            console.log(compra)
-
+            compra.data = Date();
             if(novo){
-              this.db.add(compra)
+              var r = this.dbcompras.add(compra)
+              console.log(r);
             }
             else{
               compra.key = obj.key;
-              this.db.edit(compra);
+              this.dbcompras.edit(compra);
             }
           }
         }
@@ -81,7 +105,7 @@ export class ComprasPage {
   }
 
   removeCompra(obj: any){
-    this.db.remove(obj);
+    this.dbcompras.remove(obj);
   }
 
   hidden(obj: any){

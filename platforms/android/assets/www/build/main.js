@@ -1,6 +1,6 @@
 webpackJsonp([6],{
 
-/***/ 134:
+/***/ 136:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9,7 +9,7 @@ webpackJsonp([6],{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_database_database__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_angular_components_alert_alert_controller__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__model_categoria_model__ = __webpack_require__(413);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__model_categoria_model__ = __webpack_require__(412);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -111,7 +111,7 @@ var CategoriasPage = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 135:
+/***/ 137:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119,7 +119,7 @@ var CategoriasPage = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_database_database__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__model_compra_model__ = __webpack_require__(414);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__model_compra_model__ = __webpack_require__(413);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ionic_angular_components_alert_alert_controller__ = __webpack_require__(41);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -144,16 +144,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var ComprasPage = /** @class */ (function () {
-    function ComprasPage(db, navCtrl, navParams, alert) {
+    function ComprasPage(db, db1, navCtrl, navParams, alert) {
+        var _this = this;
         this.db = db;
+        this.db1 = db1;
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.alert = alert;
+        this.lista = new Array();
+        this.option = "historico";
         this.compras$ = this.db
             .get('compras')
             .snapshotChanges()
             .map(function (changes) {
             return changes.map(function (c) { return (__assign({ key: c.payload.key }, c.payload.val())); });
+        });
+        this.rol$ = this.db1
+            .get('alimentacao')
+            .snapshotChanges()
+            .map(function (changes) {
+            return changes.map(function (c) { return (__assign({ key: c.payload.key }, c.payload.val())); });
+        });
+        this.rol$.subscribe(function (data) {
+            data.forEach(function (el) {
+                if (el.qtn < el.qtn_min) {
+                    _this.lista.push(el);
+                }
+            });
+            //this.lista.push()
         });
     }
     ComprasPage.prototype.ionViewDidLoad = function () {
@@ -189,7 +207,8 @@ var ComprasPage = /** @class */ (function () {
                     text: "Salvar",
                     handler: function (data) {
                         var compra = data;
-                        compra.data = new Date();
+                        console.log(new Date());
+                        compra.data = Date();
                         console.log(compra);
                         if (novo) {
                             _this.db.add(compra);
@@ -217,9 +236,10 @@ var ComprasPage = /** @class */ (function () {
     };
     ComprasPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-compras',template:/*ion-inline-start:"/home/fotonica/Documents/Projects/home/src/pages/compras/compras.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Compras</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content>\n\n  <ion-fab bottom right>\n    <button (click)="addCompra()" ion-fab mini><ion-icon name="add"></ion-icon></button>\n  </ion-fab>\n\n  <ion-card *ngFor="let c of compras$ | async" [hidden]="c.show">\n    <ion-card-header>\n      <ion-row>\n        <ion-col>\n          <button (click)="hidden(c)" ion-button clear>\n            <ion-icon name="book"></ion-icon> {{c.nome}}\n          </button>\n        </ion-col>\n        \n        <ion-col>\n          <ion-buttons right>\n            <button ion-button clear (click)="editCompra(c)">\n              <ion-icon name="create"></ion-icon>\n            </button>\n            <button ion-button clear (click)="removeCompra(c)">\n              <ion-icon name="trash"></ion-icon>\n            </button>\n          </ion-buttons>\n        </ion-col>\n      </ion-row>\n    </ion-card-header>\n\n    <ion-card-content>\n      <button ion-button clear>\n        {{c.valor | format}}\n      </button>\n      <button ion-button clear>\n        Data: {{c.data | json}}\n      </button>\n    </ion-card-content>\n  </ion-card>\n</ion-content>\n'/*ion-inline-end:"/home/fotonica/Documents/Projects/home/src/pages/compras/compras.html"*/,
+            selector: 'page-compras',template:/*ion-inline-start:"/home/fotonica/Documents/Projects/home/src/pages/compras/compras.html"*/'<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Compras</ion-title>\n  </ion-navbar>\n\n  <div>\n    <ion-segment [(ngModel)]="option">\n      <ion-segment-button value="lista">\n        Lista\n      </ion-segment-button>\n      <ion-segment-button value="historico">\n        Histórico\n      </ion-segment-button>\n    </ion-segment>\n  </div>\n</ion-header>\n\n\n<ion-content>\n\n  <div [ngSwitch]="option">\n    <div *ngSwitchCase="\'historico\'">\n      <ion-card *ngFor="let c of compras$ | async" [hidden]="c.show">\n        <ion-card-header>\n          <ion-row>\n            <ion-col>\n              <button (click)="hidden(c)" ion-button clear>\n                <ion-icon name="book"></ion-icon> {{c.nome}}\n              </button>\n            </ion-col>\n            \n            <ion-col>\n              <ion-buttons right>\n                <button ion-button clear (click)="editCompra(c)">\n                  <ion-icon name="create"></ion-icon>\n                </button>\n                <button ion-button clear (click)="removeCompra(c)">\n                  <ion-icon name="trash"></ion-icon>\n                </button>\n              </ion-buttons>\n            </ion-col>\n          </ion-row>\n        </ion-card-header>\n    \n        <ion-card-content>\n          <button ion-button clear>\n            {{c.valor | format}}\n          </button>\n          <button ion-button clear>\n            Data: {{c.data | date}}\n          </button>\n        </ion-card-content>\n      </ion-card>\n\n      <ion-fab bottom right>\n        <button (click)="addCompra()" ion-fab mini><ion-icon name="add"></ion-icon></button>\n      </ion-fab>\n    </div>\n  \n\n    <div *ngSwitchCase="\'lista\'">\n      <ion-card *ngFor="let p of lista">\n        <ion-card-header>\n          <ion-row>\n            <ion-col col-10>\n              <button ion-button clear>{{p.nome}}</button>\n            </ion-col>\n            <ion-col col-2>\n              <button ion-button clear>{{p.qtn_min-p.qtn}}</button>\n            </ion-col>\n          </ion-row>\n        </ion-card-header>\n      </ion-card>\n    </div>\n\n  </div>\n\n  \n</ion-content>\n'/*ion-inline-end:"/home/fotonica/Documents/Projects/home/src/pages/compras/compras.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__providers_database_database__["a" /* DatabaseProvider */],
+            __WEBPACK_IMPORTED_MODULE_2__providers_database_database__["a" /* DatabaseProvider */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_4_ionic_angular_components_alert_alert_controller__["a" /* AlertController */]])
     ], ComprasPage);
@@ -230,7 +250,7 @@ var ComprasPage = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 136:
+/***/ 138:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -238,7 +258,7 @@ var ComprasPage = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_database_database__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__model_produto_model__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__model_produto_model__ = __webpack_require__(414);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_barcode_scanner__ = __webpack_require__(238);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -331,7 +351,7 @@ var ConfigProdutoPage = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 137:
+/***/ 139:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -340,7 +360,7 @@ var ConfigProdutoPage = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_database_database__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_angular_components_alert_alert_controller__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__model_loja_model__ = __webpack_require__(424);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__model_loja_model__ = __webpack_require__(423);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -442,7 +462,7 @@ var LojasPage = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 138:
+/***/ 140:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -487,7 +507,7 @@ var ReceitasPage = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 139:
+/***/ 141:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -554,27 +574,27 @@ webpackEmptyAsyncContext.id = 151;
 
 var map = {
 	"../pages/categorias/categorias.module": [
-		445,
+		447,
 		5
 	],
 	"../pages/compras/compras.module": [
-		446,
+		448,
 		4
 	],
 	"../pages/config-produto/config-produto.module": [
-		447,
+		449,
 		3
 	],
 	"../pages/lojas/lojas.module": [
-		448,
+		450,
 		2
 	],
 	"../pages/receitas/receitas.module": [
-		449,
+		451,
 		1
 	],
 	"../pages/relatorio/relatorio.module": [
-		450,
+		452,
 		0
 	]
 };
@@ -603,7 +623,7 @@ module.exports = webpackAsyncContext;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_database_database__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_angular_components_alert_alert_controller__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_produto_config_produto__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_produto_config_produto__ = __webpack_require__(138);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -792,19 +812,18 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angularfire2__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_angularfire2_database__ = __webpack_require__(193);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_barcode_scanner__ = __webpack_require__(238);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_component__ = __webpack_require__(442);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_component__ = __webpack_require__(441);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_home_home__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_compras_compras__ = __webpack_require__(135);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_receitas_receitas__ = __webpack_require__(138);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_categorias_categorias__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_relatorio_relatorio__ = __webpack_require__(139);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_lojas_lojas__ = __webpack_require__(137);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_config_produto_config_produto__ = __webpack_require__(136);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_status_bar__ = __webpack_require__(279);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_splash_screen__ = __webpack_require__(280);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__firebase_config__ = __webpack_require__(443);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__providers_database_database__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pipes_format_format__ = __webpack_require__(444);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_compras_compras__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_receitas_receitas__ = __webpack_require__(140);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_categorias_categorias__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_relatorio_relatorio__ = __webpack_require__(141);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_lojas_lojas__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_config_produto_config_produto__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_status_bar__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__firebase_config__ = __webpack_require__(445);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__providers_database_database__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pipes_format_format__ = __webpack_require__(446);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -826,7 +845,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-
+//import { SplashScreen } from '@ionic-native/splash-screen';
 
 
 
@@ -843,7 +862,7 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_9__pages_receitas_receitas__["a" /* ReceitasPage */],
                 __WEBPACK_IMPORTED_MODULE_11__pages_relatorio_relatorio__["a" /* RelatorioPage */],
                 __WEBPACK_IMPORTED_MODULE_12__pages_lojas_lojas__["a" /* LojasPage */],
-                __WEBPACK_IMPORTED_MODULE_18__pipes_format_format__["a" /* FormatPipe */],
+                __WEBPACK_IMPORTED_MODULE_17__pipes_format_format__["a" /* FormatPipe */],
                 __WEBPACK_IMPORTED_MODULE_13__pages_config_produto_config_produto__["a" /* ConfigProdutoPage */]
             ],
             imports: [
@@ -858,7 +877,7 @@ var AppModule = /** @class */ (function () {
                         { loadChildren: '../pages/relatorio/relatorio.module#RelatorioPageModule', name: 'RelatorioPage', segment: 'relatorio', priority: 'low', defaultHistory: [] }
                     ]
                 }),
-                __WEBPACK_IMPORTED_MODULE_3_angularfire2__["a" /* AngularFireModule */].initializeApp(__WEBPACK_IMPORTED_MODULE_16__firebase_config__["a" /* CONFIG */]),
+                __WEBPACK_IMPORTED_MODULE_3_angularfire2__["a" /* AngularFireModule */].initializeApp(__WEBPACK_IMPORTED_MODULE_15__firebase_config__["a" /* CONFIG */]),
                 __WEBPACK_IMPORTED_MODULE_4_angularfire2_database__["b" /* AngularFireDatabaseModule */]
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* IonicApp */]],
@@ -874,9 +893,9 @@ var AppModule = /** @class */ (function () {
             ],
             providers: [
                 __WEBPACK_IMPORTED_MODULE_14__ionic_native_status_bar__["a" /* StatusBar */],
-                __WEBPACK_IMPORTED_MODULE_15__ionic_native_splash_screen__["a" /* SplashScreen */],
+                //SplashScreen,
                 { provide: __WEBPACK_IMPORTED_MODULE_1__angular_core__["u" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* IonicErrorHandler */] },
-                __WEBPACK_IMPORTED_MODULE_17__providers_database_database__["a" /* DatabaseProvider */],
+                __WEBPACK_IMPORTED_MODULE_16__providers_database_database__["a" /* DatabaseProvider */],
                 __WEBPACK_IMPORTED_MODULE_5__ionic_native_barcode_scanner__["a" /* BarcodeScanner */]
             ]
         })
@@ -888,7 +907,7 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 413:
+/***/ 412:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -903,7 +922,7 @@ var CategoriaModel = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 414:
+/***/ 413:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -918,7 +937,7 @@ var CompraModel = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 415:
+/***/ 414:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -988,7 +1007,7 @@ var DatabaseProvider = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 424:
+/***/ 423:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1003,21 +1022,22 @@ var LojaModel = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 442:
+/***/ 441:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(279);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(280);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_compras_compras__ = __webpack_require__(135);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_receitas_receitas__ = __webpack_require__(138);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_categorias_categorias__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_relatorio_relatorio__ = __webpack_require__(139);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_lojas_lojas__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_home_home__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_compras_compras__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_receitas_receitas__ = __webpack_require__(140);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_categorias_categorias__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_relatorio_relatorio__ = __webpack_require__(141);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_lojas_lojas__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rxjs_observable_timer__ = __webpack_require__(442);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rxjs_observable_timer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_rxjs_observable_timer__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1030,6 +1050,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+//import { SplashScreen } from '@ionic-native/splash-screen';
 
 
 
@@ -1038,20 +1059,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var MyApp = /** @class */ (function () {
-    function MyApp(platform, statusBar, splashScreen) {
+    function MyApp(platform, statusBar
+        /*public splashScreen: SplashScreen*/ ) {
         this.platform = platform;
         this.statusBar = statusBar;
-        this.splashScreen = splashScreen;
-        this.rootPage = __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */];
+        this.rootPage = __WEBPACK_IMPORTED_MODULE_3__pages_home_home__["a" /* HomePage */];
+        this.showSplash = true;
         this.initializeApp();
         // used for an example of ngFor and navigation
         this.pages = [
-            { title: 'Home', component: __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */] },
-            { title: 'Compras', component: __WEBPACK_IMPORTED_MODULE_5__pages_compras_compras__["a" /* ComprasPage */] },
-            { title: 'Receitas', component: __WEBPACK_IMPORTED_MODULE_6__pages_receitas_receitas__["a" /* ReceitasPage */] },
-            { title: 'Categorias', component: __WEBPACK_IMPORTED_MODULE_7__pages_categorias_categorias__["a" /* CategoriasPage */] },
-            { title: 'Relatorio', component: __WEBPACK_IMPORTED_MODULE_8__pages_relatorio_relatorio__["a" /* RelatorioPage */] },
-            { title: 'Lojas', component: __WEBPACK_IMPORTED_MODULE_9__pages_lojas_lojas__["a" /* LojasPage */] }
+            { title: 'Home', component: __WEBPACK_IMPORTED_MODULE_3__pages_home_home__["a" /* HomePage */] },
+            { title: 'Compras', component: __WEBPACK_IMPORTED_MODULE_4__pages_compras_compras__["a" /* ComprasPage */] },
+            { title: 'Receitas', component: __WEBPACK_IMPORTED_MODULE_5__pages_receitas_receitas__["a" /* ReceitasPage */] },
+            { title: 'Categorias', component: __WEBPACK_IMPORTED_MODULE_6__pages_categorias_categorias__["a" /* CategoriasPage */] },
+            { title: 'Relatorio', component: __WEBPACK_IMPORTED_MODULE_7__pages_relatorio_relatorio__["a" /* RelatorioPage */] },
+            { title: 'Lojas', component: __WEBPACK_IMPORTED_MODULE_8__pages_lojas_lojas__["a" /* LojasPage */] }
         ];
     }
     MyApp.prototype.initializeApp = function () {
@@ -1060,7 +1082,10 @@ var MyApp = /** @class */ (function () {
             // Okay, so the platform is ready and our plugins are available.
             // Here you can do any higher level native things you might need.
             _this.statusBar.styleDefault();
-            _this.splashScreen.hide();
+            //this.splashScreen.hide();
+            Object(__WEBPACK_IMPORTED_MODULE_9_rxjs_observable_timer__["timer"])(3000).subscribe(function () {
+                _this.showSplash = false;
+            });
         });
     };
     MyApp.prototype.openPage = function (page) {
@@ -1073,9 +1098,10 @@ var MyApp = /** @class */ (function () {
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
     ], MyApp.prototype, "nav", void 0);
     MyApp = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/home/fotonica/Documents/Projects/home/src/app/app.html"*/'<ion-menu [content]="content">\n  <ion-header>\n    <ion-toolbar>\n      <ion-title>Menu</ion-title>\n    </ion-toolbar>\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/home/fotonica/Documents/Projects/home/src/app/app.html"*/
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/home/fotonica/Documents/Projects/home/src/app/app.html"*/'<div *ngIf="showSplash" class="splash">\n  <div class="spinner">\n    <div class="sk-cube-grid">\n      <div class="sk-cube sk-cube1"></div>\n      <div class="sk-cube sk-cube2"></div>\n      <div class="sk-cube sk-cube3"></div>\n      <div class="sk-cube sk-cube4"></div>\n      <div class="sk-cube sk-cube5"></div>\n      <div class="sk-cube sk-cube6"></div>\n      <div class="sk-cube sk-cube7"></div>\n      <div class="sk-cube sk-cube8"></div>\n      <div class="sk-cube sk-cube9"></div>\n    </div>\n  </div>\n</div>\n\n<ion-menu [content]="content">\n  <ion-header>\n    <ion-toolbar>\n      <ion-title>Menu</ion-title>\n    </ion-toolbar>\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n        {{p.title}}\n      </button>\n    </ion-list>\n  </ion-content>\n\n</ion-menu>\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"/home/fotonica/Documents/Projects/home/src/app/app.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */], __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__["a" /* SplashScreen */]])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */]
+            /*public splashScreen: SplashScreen*/ ])
     ], MyApp);
     return MyApp;
 }());
@@ -1084,7 +1110,7 @@ var MyApp = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 443:
+/***/ 445:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1101,7 +1127,7 @@ var CONFIG = {
 
 /***/ }),
 
-/***/ 444:
+/***/ 446:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

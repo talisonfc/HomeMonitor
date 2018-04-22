@@ -1,11 +1,16 @@
 <ion-header>
-  <ion-navbar class="header-white">
+
+  <ion-navbar>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Home</ion-title>
+  
+    <ion-buttons right>
+      <button ion-button (click)="addProduto()">Novo produto</button>
+    </ion-buttons>
   </ion-navbar>
-
+  
   <ion-searchbar 
     [(ngModel)]="search"
     (ionInput)="onInput($event)">
@@ -13,42 +18,20 @@
 </ion-header>
 
 <ion-content>
-  
-
-  <ion-fab bottom right>
-    <button (click)="addProduto()" ion-fab mini><ion-icon name="add"></ion-icon></button>
-    <!--ion-fab-list>
-      <button ion-fab><ion-icon name="logo-facebook"></ion-icon></button>
-      <button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>
-      <button ion-fab><ion-icon name="logo-vimeo"></ion-icon></button>
-      <button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>
-    </ion-fab-list-->
-  </ion-fab>
 
   <ion-card *ngFor="let p of produtos$ | async">
     <ion-card-header>
-      <ion-row>
-        <ion-col col-10>
-          <button (click)="hidden(p)" ion-button clear>
-            <ion-icon name="book"></ion-icon> {{p.nome}}
-          </button>
-        </ion-col>
-        
-        <ion-col col-2>
-          <ion-buttons right>
-            <button ion-button clear (click)="removeProduto(p)">
-              <ion-icon name="trash"></ion-icon>
-            </button>
-          </ion-buttons>
-        </ion-col>
-      </ion-row>
+      <button (click)="hidden(p)" ion-button clear>
+        <ion-icon name="book"></ion-icon> {{p.nome}}
+      </button>
+      <!--button ion-button clear (click)="removeProduto(p)">Remover</button-->
     </ion-card-header>
 
     <ion-card-content [hidden]="!p.show">
       <ion-row>
-        <ion-col *ngFor="let cst of p.custo">
+        <ion-col *ngFor="let cst of p.custo; index as i">
           <ion-label class="label-detail">{{cst.loja}}</ion-label>
-          <button ion-button clear block>
+          <button ion-button clear block (click)="editPreco(p,i)">
             {{cst.valor | format}}
           </button>
         </ion-col>
@@ -62,7 +45,7 @@
 
         <ion-col>
           <ion-label class="label-detail">Quantidade mínima</ion-label>
-          <button ion-button clear block (click)="editProduto(p,'Quantidade mínima', 'qtn_min', 'Quantidade', 'number', p.qtn)">
+          <button ion-button clear block (click)="editProduto(p,'Quantidade mínima', 'qtn_min', 'Quantidade', 'number', p.qtn_min)">
             {{p.qtn_min}}
           </button>
         </ion-col>

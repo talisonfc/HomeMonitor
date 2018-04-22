@@ -17,14 +17,6 @@ module.exports = [
     ]
   },
   {
-    "id": "cordova-plugin-splashscreen.SplashScreen",
-    "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
-    "pluginId": "cordova-plugin-splashscreen",
-    "clobbers": [
-      "navigator.splashscreen"
-    ]
-  },
-  {
     "id": "phonegap-plugin-barcodescanner.BarcodeScanner",
     "file": "plugins/phonegap-plugin-barcodescanner/www/barcodescanner.js",
     "pluginId": "phonegap-plugin-barcodescanner",
@@ -39,7 +31,6 @@ module.exports.metadata =
   "cordova-plugin-device": "2.0.1",
   "cordova-plugin-ionic-keyboard": "2.0.5",
   "cordova-plugin-ionic-webview": "1.1.16",
-  "cordova-plugin-splashscreen": "5.0.2",
   "cordova-plugin-whitelist": "1.3.3",
   "phonegap-plugin-barcodescanner": "7.1.0"
 };

@@ -4,6 +4,7 @@ import { DatabaseProvider } from '../../providers/database/database'
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { LojaModel } from '../../model/loja.model'
 import { Observable } from 'rxjs/Observable';
+import { LojaProvider } from '../../providers/loja/loja';
 
 @IonicPage()
 @Component({
@@ -14,11 +15,11 @@ export class LojasPage {
 
   lojas$: Observable<LojaModel[]>
 
-  constructor(private db: DatabaseProvider<LojaModel[]>,
+  constructor(private dblojas: LojaProvider<LojaModel[]>,
     private alert: AlertController,
     public navCtrl: NavController, public navParams: NavParams) {
 
-      this.lojas$ = this.db
+      this.lojas$ = this.dblojas
       .get('lojas')
       .snapshotChanges()
       .map(changes => {
@@ -55,11 +56,11 @@ export class LojasPage {
             var loja = <LojaModel>data;
 
             if(novo){
-              this.db.add(loja)
+              this.dblojas.add(loja)
             }
             else{
               loja.key = obj.key;
-              this.db.edit(loja);
+              this.dblojas.edit(loja);
             }
           }
         }
@@ -69,7 +70,7 @@ export class LojasPage {
   }
 
   removeLoja(obj: any){
-    this.db.remove(obj);
+    this.dblojas.remove(obj);
   }
 
   editLoja(obj: any){

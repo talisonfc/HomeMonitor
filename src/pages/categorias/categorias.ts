@@ -4,6 +4,7 @@ import { DatabaseProvider } from '../../providers/database/database'
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { CategoriaModel } from '../../model/categoria.model'
 import { Observable } from 'rxjs/Observable';
+import { CategoriaProvider } from '../../providers/categoria/categoria';
 
 @IonicPage()
 @Component({
@@ -14,11 +15,11 @@ export class CategoriasPage {
 
   categorias$: Observable<CategoriaModel[]>
 
-  constructor(private db: DatabaseProvider<CategoriaModel[]>,
+  constructor(private dbcategorias: CategoriaProvider<CategoriaModel[]>,
     private alert: AlertController,
     public navCtrl: NavController, public navParams: NavParams) {
 
-      this.categorias$ = this.db
+      this.categorias$ = this.dbcategorias
       .get('categorias')
       .snapshotChanges()
       .map(changes => {
@@ -55,11 +56,11 @@ export class CategoriasPage {
             var categoria = <CategoriaModel>data;
 
             if(novo){
-              this.db.add(categoria)
+              this.dbcategorias.add(categoria)
             }
             else{
               categoria.key = obj.key;
-              this.db.edit(categoria);
+              this.dbcategorias.edit(categoria);
             }
           }
         }
@@ -69,7 +70,7 @@ export class CategoriasPage {
   }
 
   removeCategoria(obj: any){
-    this.db.remove(obj);
+    this.dbcategorias.remove(obj);
   }
 
   editCategoria(obj: any){
